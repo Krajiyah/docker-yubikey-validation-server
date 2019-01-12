@@ -23,7 +23,6 @@ RUN apt-get install -y --force-yes debconf software-properties-common supervisor
 RUN mkdir -p /root /var/lock/apache2 /var/run/apache2 /var/log/supervisor
 ADD ./conf/ /root/
 ADD ./conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 RUN debconf-set-selections /root/yubi.seed
 RUN add-apt-repository ppa:yubico/stable
 RUN apt-get update
@@ -33,8 +32,8 @@ RUN gpg --no-tty --batch --trust-model always --gen-key /root/gpg.conf
 RUN gpg --no-tty --import default.sec
 RUN ykksm-gen-keys --urandom 1 $KEYS_AMOUNT > /root/keys.txt
 RUN gpg --no-tty --trust-model always -a -s --encrypt -r `gpg --no-tty --list-keys | head -n 3 | tail -1 | awk '{print $2}' | cut -d '/' -f2` < /root/keys.txt > /root/encrypted_keys.txt
-RUN /etc/init.d/mysql start && ykksm-import < /root/encrypted_keys.txt
-RUN /etc/init.d/mysql start && \
+RUN find /var/lib/mysql -type f -exec touch {} \; && service mysql start && ykksm-import < /root/encrypted_keys.txt
+RUN find /var/lib/mysql -type f -exec touch {} \; && service mysql start && \
 	echo "######### KEYS ###########" && \
 	echo "---" && \
 	for i in `grep -v ^# /root/keys.txt`; do echo "key`echo $i | cut -d',' -f1`:"; echo "  public_id: `echo $i | cut -d',' -f2`"; echo "  private_id: `echo $i | cut -d',' -f3`";  echo "  secret_key: `echo $i | cut -d',' -f4`"; done; \

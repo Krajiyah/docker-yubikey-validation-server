@@ -32,7 +32,7 @@ pgrep rngd
 - Clone this repository
 
 ```bash
-git clone https://github.com/mvisonneau/docker-yubikey-validation-server.git
+git clone https://github.com/Krajiyah/docker-yubikey-validation-server.git
 ```
 
 - Adjust the **unsecured** fields into the `Dockerfile` and `conf/yubi.seed`
