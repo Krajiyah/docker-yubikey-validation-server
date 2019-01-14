@@ -12,7 +12,7 @@ FROM ubuntu:14.04
 MAINTAINER Maxime VISONNEAU <maxime.visonneau@gmail.com>
 
 ## Custom variables
-ENV KEYS_AMOUNT = 10			# Total of keys that will be generated = Amount of Yubikey you want to manage with this KSM
+ENV KEYS_AMOUNT = 20			# Total of keys that will be generated = Amount of Yubikey you want to manage with this KSM
 ENV DB_PASSWORD = unsecured		# Database password
 
 # Installation & Configuration
@@ -37,7 +37,6 @@ RUN find /var/lib/mysql -type f -exec touch {} \; && service mysql start && \
 	echo "######### KEYS ###########" && \
 	echo "---" && \
 	for i in `grep -v ^# /root/keys.txt`; do echo "key`echo $i | cut -d',' -f1`:"; echo "  public_id: `echo $i | cut -d',' -f2`"; echo "  private_id: `echo $i | cut -d',' -f3`";  echo "  secret_key: `echo $i | cut -d',' -f4`"; done; \
-	rm -f /root/keys.txt && \
 	echo "######## CLIENT ##########" && \
 	echo "---\nclient:" && \
 	echo "  id:  `ykval-export-clients | cut -d',' -f1`" && \
